@@ -77,8 +77,11 @@ window.__initBody3D = function(container, onSelect){
   const SHO = {x:.62, y:1.89};               // pivote del hombro
   const ANG = -1.12;                         // caída del brazo (~64°)
   const DIR = {x:Math.cos(ANG), y:Math.sin(ANG)};
-  function zoneOf(p){
-    const ax = Math.abs(p.x), y = p.y, z = p.z;
+  // p: punto local; n: normal local de la superficie golpeada (las
+  // divisiones frente/atrás de piernas y clavícula usan la normal:
+  // inmune a roces tangenciales en la silueta)
+  function zoneOf(p, n){
+    const ax = Math.abs(p.x), y = p.y, z = p.z, nz = n ? n.z : z;
     const S = b => b + (p.x > 0 ? 100 : 200);   // lado anatómico (izq = +x)
     // — cadena del brazo: cilindro alrededor del eje del brazo —
     if(ax > .40 && y > .2){
@@ -98,7 +101,8 @@ window.__initBody3D = function(container, onSelect){
     if(y > 2.02) return ax > .18 ? S(13) : 2;     // cuello (trapecio → hombro)
     if(y > 1.76){                                 // línea de la clavícula
       if(ax > .34) return S(13);                  // hombro
-      return z > -.02 ? 3 : 10;                   // clavícula / espalda alta
+      if(nz > .25 && z > 0) return 3;             // clavícula (cara frontal)
+      return z > -.02 ? S(13) : 10;               // trapecio → hombro / espalda alta
     }
     if(y > .80){                                  // caja torácica + abdomen
       if(ax > .29) return y > 1.18 ? S(6) : S(9); // costillas / costado
@@ -112,26 +116,27 @@ window.__initBody3D = function(container, onSelect){
       return 12;                                  // espalda baja
     }
     if(y > .28){                                  // cintura pélvica
-      if(z <= -.02){
-        if(ax > .36) return S(20);                // cadera (lateral)
+      if(z <= -.05){
+        if(ax > .32) return S(20);                // cadera (lateral)
         return y > .66 ? 12 : S(21);              // espalda baja / glúteo
       }
       if(ax > .26) return S(20);                  // cadera
       return (y < .42 && ax < .18) ? 22 : 19;     // ingle / pelvis
     }
-    if(y > -.62) return z > -.02 ? S(23) : S(24); // muslo frontal / posterior
+    if(y > -.62) return nz > 0 ? S(23) : S(24);   // muslo frontal / posterior
     if(y > -.84) return S(25);                    // rodilla
-    if(y > -1.40) return z > -.02 ? S(27) : S(26);// espinilla / pantorrilla
+    if(y > -1.40) return nz > 0 ? S(27) : S(26);  // espinilla / pantorrilla
     if(y > -1.56) return S(28);                   // tobillo
     return y < -1.74 ? S(30) : S(29);             // planta / empeine
   }
 
   /* ════════ SHADER HOLOGRÁFICO ════════ */
   const VERT = [
-    'varying vec3 vN; varying vec3 vV; varying vec3 vP;',
+    'varying vec3 vN; varying vec3 vV; varying vec3 vP; varying vec3 vNo;',
     'void main(){',
     '  vec4 mv = modelViewMatrix * vec4(position,1.0);',
     '  vN = normalMatrix * normal;',
+    '  vNo = normal;',            // normal en espacio local (para el mapa)
     '  vV = -mv.xyz;',
     '  vP = position;',
     '  gl_Position = projectionMatrix * mv;',
@@ -141,9 +146,9 @@ window.__initBody3D = function(container, onSelect){
     'precision highp float;',
     'uniform vec3 uAccent; uniform float uTime;',
     'uniform float uSel; uniform float uHov; uniform float uSelI; uniform float uHovI;',
-    'varying vec3 vN; varying vec3 vV; varying vec3 vP;',
+    'varying vec3 vN; varying vec3 vV; varying vec3 vP; varying vec3 vNo;',
     'float S(float x, float b){ return b + (x > 0.0 ? 100.0 : 200.0); }',
-    'float zoneOf(vec3 p){',
+    'float zoneOf(vec3 p, float nz){',
     '  float ax = abs(p.x);',
     '  if(ax > .40 && p.y > .2){',
     '    vec2 q = vec2(ax - .62, p.y - 1.89);',
@@ -162,7 +167,8 @@ window.__initBody3D = function(container, onSelect){
     '  if(p.y > 2.02) return ax > .18 ? S(p.x, 13.) : 2.;',
     '  if(p.y > 1.76){',
     '    if(ax > .34) return S(p.x, 13.);',
-    '    return p.z > -.02 ? 3. : 10.;',
+    '    if(nz > .25 && p.z > 0.) return 3.;',
+    '    return p.z > -.02 ? S(p.x, 13.) : 10.;',
     '  }',
     '  if(p.y > .80){',
     '    if(ax > .29) return p.y > 1.18 ? S(p.x, 6.) : S(p.x, 9.);',
@@ -176,16 +182,16 @@ window.__initBody3D = function(container, onSelect){
     '    return 12.;',
     '  }',
     '  if(p.y > .28){',
-    '    if(p.z <= -.02){',
-    '      if(ax > .36) return S(p.x, 20.);',
+    '    if(p.z <= -.05){',
+    '      if(ax > .32) return S(p.x, 20.);',
     '      return p.y > .66 ? 12. : S(p.x, 21.);',
     '    }',
     '    if(ax > .26) return S(p.x, 20.);',
     '    return (p.y < .42 && ax < .18) ? 22. : 19.;',
     '  }',
-    '  if(p.y > -.62) return p.z > -.02 ? S(p.x, 23.) : S(p.x, 24.);',
+    '  if(p.y > -.62) return nz > 0. ? S(p.x, 23.) : S(p.x, 24.);',
     '  if(p.y > -.84) return S(p.x, 25.);',
-    '  if(p.y > -1.40) return p.z > -.02 ? S(p.x, 27.) : S(p.x, 26.);',
+    '  if(p.y > -1.40) return nz > 0. ? S(p.x, 27.) : S(p.x, 26.);',
     '  if(p.y > -1.56) return S(p.x, 28.);',
     '  return p.y < -1.74 ? S(p.x, 30.) : S(p.x, 29.);',
     '}',
@@ -200,7 +206,7 @@ window.__initBody3D = function(container, onSelect){
     '  vec3 v = normalize(vV);',
     '  float fres = pow(1.0 - abs(dot(n, v)), 2.6);',
     '  float scan = .92 + .08 * sin(vP.y * 70.0 + uTime * 1.6);',
-    '  float z = zoneOf(vP);',
+    '  float z = zoneOf(vP, normalize(vNo).z);',
     '  float fill = match(z, uSel) * uSelI + match(z, uHov) * uHovI * .45;',
     '  float i = .055 + fres * (.92 + .5 * fill) + fill * .42;',
     '  gl_FragColor = vec4(uAccent * i * scan, 1.0);',
@@ -333,6 +339,9 @@ window.__initBody3D = function(container, onSelect){
 
   function pick(clientX, clientY){
     if(!bodyMesh) return 0;
+    // matrices al día aunque aún no haya corrido el frame tras un giro
+    // (worldToLocal solo actualiza el grupo, no sus hijos)
+    group.updateWorldMatrix(true, true);
     const r = renderer.domElement.getBoundingClientRect();
     ptr.x = ((clientX - r.left) / r.width)  * 2 - 1;
     ptr.y = -((clientY - r.top)  / r.height) * 2 + 1;
@@ -340,7 +349,8 @@ window.__initBody3D = function(container, onSelect){
     const hit = ray.intersectObject(bodyMesh, false)[0];
     if(!hit) return 0;
     const p = group.worldToLocal(hit.point.clone());
-    return zoneOf(p);
+    if(window.__B3D_DEBUG) window.__B3D_LAST = {p:{x:p.x,y:p.y,z:p.z}, n:hit.face && {x:hit.face.normal.x,y:hit.face.normal.y,z:hit.face.normal.z}, ry:group.rotation.y};
+    return zoneOf(p, hit.face && hit.face.normal);
   }
 
   // — etiqueta de orientación (Frente / Perfil / Espalda) —
