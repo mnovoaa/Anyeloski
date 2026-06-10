@@ -48,9 +48,20 @@ window.__initBody3D = function(container, onSelect){
   // zoom: distancia animada con límites prudentes
   const CAM = {min:5.4, max:12.0, def:8.7};
   let camD = CAM.def, camT = CAM.def;
+  // paneo vertical: al acercar, arrastrar en vertical recorre el
+  // cuerpo (cabeza↔pies); el rango crece con el zoom y se anula
+  // cuando el cuerpo completo cabe en pantalla
+  let panY = .45, panT = .45;
+  const visH = ()=> Math.tan(camera.fov * Math.PI / 360) * camD;  // semialtura visible
+  function clampPan(v){
+    const m = visH() * .8;
+    const lo = -1.80 + m, hi = 2.87 - m;   // suelo y coronilla del modelo
+    if(lo >= hi) return .45;
+    return Math.min(hi, Math.max(lo, v));
+  }
   function aimCamera(){
-    camera.position.set(0, .95, camD);
-    camera.lookAt(0, .45, 0);
+    camera.position.set(0, panY + .5, camD);
+    camera.lookAt(0, panY, 0);
   }
   aimCamera();
 
@@ -355,12 +366,20 @@ window.__initBody3D = function(container, onSelect){
 
   // — etiqueta de orientación (Frente / Perfil / Espalda) —
   const faceEl = container.querySelector('.b3d-face');
+  const viewBtns = container.querySelectorAll('.b3d-views button');
   let faceLabel = '';
   function syncFace(){
-    if(!faceEl) return;
     const c = Math.cos(group.rotation.y);
     const label = c > .45 ? 'Frente' : (c < -.45 ? 'Espalda' : 'Perfil');
-    if(label !== faceLabel){ faceLabel = label; faceEl.textContent = label; }
+    if(label === faceLabel) return;
+    faceLabel = label;
+    if(faceEl) faceEl.textContent = label;
+    // el botón de la vista activa se enciende
+    viewBtns.forEach(b=>{
+      b.classList.toggle('on',
+        (b.dataset.view === 'front' && label === 'Frente') ||
+        (b.dataset.view === 'back'  && label === 'Espalda'));
+    });
   }
 
   // — botones de vista: giran el modelo con animación —
@@ -372,28 +391,37 @@ window.__initBody3D = function(container, onSelect){
       // toma el camino corto desde la rotación actual
       const cur = group.rotation.y;
       targetY = Math.round((cur - want) / (Math.PI*2)) * Math.PI*2 + want;
-      group.rotation.x = 0;
     });
   });
 
   // — zoom: botones ± / rueda / pellizco, siempre dentro de límites —
   const clampZ = v => Math.min(CAM.max, Math.max(CAM.min, v));
+  function setZoom(v){
+    camT = clampZ(v);
+    panT = clampPan(panT);   // al alejar, el paneo vuelve a su rango
+    syncTouch();
+  }
   container.querySelectorAll('.b3d-zoom button').forEach(btn=>{
     btn.addEventListener('click', e=>{
       e.stopPropagation();
-      camT = clampZ(camT + (btn.dataset.z === 'in' ? -1.3 : 1.3));
+      setZoom(camT + (btn.dataset.z === 'in' ? -1.3 : 1.3));
     });
   });
   container.addEventListener('wheel', e=>{
     e.preventDefault();
-    camT = clampZ(camT + e.deltaY * .0045);
+    setZoom(camT + e.deltaY * .0045);
   }, {passive:false});
 
-  // — arrastre para girar (360° en Y, leve inclinación en X) + pellizco —
+  // — arrastre: gira en horizontal, recorre el cuerpo en vertical —
   const pts = new Map();          // punteros activos
   let down = null, moved = 0, pinch = null;
   const el = renderer.domElement;
-  el.style.touchAction = 'pan-y';   // el scroll vertical sigue siendo de la página
+  // sin zoom el gesto vertical sigue siendo scroll de página; con
+  // zoom el dedo navega el modelo (touch-action dinámico)
+  function syncTouch(){
+    el.style.touchAction = camT < CAM.def - .6 ? 'none' : 'pan-y';
+  }
+  syncTouch();
 
   el.addEventListener('pointerdown', e=>{
     pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
@@ -403,7 +431,7 @@ window.__initBody3D = function(container, onSelect){
       down = null;
       return;
     }
-    down = {x:e.clientX, y:e.clientY, ry:group.rotation.y, rx:group.rotation.x};
+    down = {x:e.clientX, y:e.clientY, ry:group.rotation.y, pan0:panT};
     moved = 0; targetY = null;
     el.setPointerCapture(e.pointerId);
   });
@@ -412,14 +440,16 @@ window.__initBody3D = function(container, onSelect){
       pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
       const [a, b] = [...pts.values()];
       const d = Math.hypot(a.x-b.x, a.y-b.y);
-      if(d > 10) camT = clampZ(pinch.camT0 * pinch.base / d);
+      if(d > 10) setZoom(pinch.camT0 * pinch.base / d);
       return;
     }
     if(down){
       const dx = e.clientX - down.x, dy = e.clientY - down.y;
       moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
       group.rotation.y = down.ry + dx * .011;
-      group.rotation.x = Math.max(-.3, Math.min(.3, down.rx + dy * .004));
+      // vertical: pan natural (el cuerpo sigue al puntero)
+      const h = el.clientHeight || 1;
+      panT = clampPan(down.pan0 + dy * (visH() * 2 / h));
       syncTip(0);
     }else{
       const z = pick(e.clientX, e.clientY);
@@ -463,8 +493,9 @@ window.__initBody3D = function(container, onSelect){
         group.rotation.y = targetY; targetY = null;
       }
     }
-    if(Math.abs(camT - camD) > .002){
+    if(Math.abs(camT - camD) > .002 || Math.abs(panT - panY) > .002){
       camD += (camT - camD) * .12;
+      panY += (panT - panY) * .12;
       aimCamera();
     }
     const u = mat.uniforms;
