@@ -1,0 +1,6 @@
+# artefactos locales de desarrollo (no son parte del sitio)
+.claude/
+screenshots/
+uploads/
+__*.html
+prompt.txt

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Anyeloski — Miguel Muñoz. Tatuaje de autor en Talca, Chile: realismo oscuro, black & grey y gran formato. Reserva tu sesión.">
+<title>Anyeloski — Miguel Muñoz · Escultor de la Piel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,400;125,600;125,700;125,800&family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="images/01-statue-cyan-skull.jpg" fetchpriority="high">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-grain="on" data-cursor="on">
+
+<!-- ============ INAUGURACIÓN — CONFIGURACIÓN ============
+     ✦ CUENTA REGRESIVA DE INAUGURACIÓN ✦
+
+     Para ACTIVARLA:   cambia LAUNCH_ENABLED a true
+     Para DESACTIVARLA: cambia LAUNCH_ENABLED a false
+
+     LAUNCH_DATE — fecha y hora de la inauguración.
+     Formato: 'AAAA-MM-DDTHH:MM:SS' (hora local del visitante).
+
+     Comportamiento con LAUNCH_ENABLED = true:
+       · Antes de la fecha → pantalla de cuenta regresiva a pantalla completa.
+       · Al llegar la fecha → se oculta sola y muestra el sitio (sin tocar nada).
+       · Si la fecha ya pasó → el sitio carga normal, como si no existiera.
+       · Truco: agrega ?preview a la URL para ver el sitio aunque esté activa. -->
+<script>
+  window.LAUNCH_ENABLED = false;
+  window.LAUNCH_DATE    = '2026-07-01T20:00:00';
+</script>
+
+<div class="launch-gate" id="launch-gate" hidden aria-hidden="true">
+  <div class="lg-inner">
+    <span class="lg-brand">ANYELOSKI<span class="dot">.</span></span>
+    <span class="lg-eyebrow"><span class="accent-line"></span> Taller Arcano · Talca, Chile <span class="accent-line"></span></span>
+    <h2 class="lg-title">La inauguración<br><em>se acerca</em></h2>
+    <div class="lg-count" id="lg-count" role="timer" aria-live="off">
+      <div class="lg-unit"><b id="lg-d">00</b><small>Días</small></div>
+      <span class="lg-sep">:</span>
+      <div class="lg-unit"><b id="lg-h">00</b><small>Horas</small></div>
+      <span class="lg-sep">:</span>
+      <div class="lg-unit"><b id="lg-m">00</b><small>Minutos</small></div>
+      <span class="lg-sep">:</span>
+      <div class="lg-unit"><b id="lg-s">00</b><small>Segundos</small></div>
+    </div>
+    <p class="lg-note">Tatuaje de autor · Realismo oscuro · Black &amp; Grey</p>
+    <a class="lg-wsp" href="https://wa.me/56957902862?text=Hola%20Miguel%2C%20quiero%20informaci%C3%B3n%20sobre%20la%20inauguraci%C3%B3n" target="_blank" rel="noopener">Avísame por WhatsApp →</a>
+  </div>
+</div>
+<script>
+  /* Decide sincrónicamente si la puerta se muestra, antes del primer render,
+     para evitar destellos de contenido. La lógica del contador vive en app.js. */
+  (function(){
+    var g = document.getElementById('launch-gate');
+    if (!window.LAUNCH_ENABLED) return;              // desactivada por configuración
+    if (/[?&]preview/.test(location.search)) return; // ?preview salta la puerta
+    if (new Date(window.LAUNCH_DATE) - Date.now() > 0){
+      g.hidden = false; g.setAttribute('aria-hidden','false');
+      document.documentElement.classList.add('gated');
+    }
+  })();
+</script>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <a class="brand" href="#top" data-scroll>ANYELOSKI<span class="dot">.</span></a>
+  <div class="nav-links">
+    <a href="#lanzamiento" data-scroll>Lanzamiento</a>
+    <a href="#archivo" data-scroll>Archivo</a>
+    <a href="#taller" data-scroll>Mi Taller</a>
+    <a href="#artista" data-scroll>Sobre Mí</a>
+    <a href="#ritual" data-scroll>Reserva</a>
+    <a href="#estudio" data-scroll>Estudio</a>
+  </div>
+  <a class="nav-cta cursor-target" href="#ritual" data-scroll>Reservar sesión</a>
+  <button class="nav-burger" aria-label="Menú"><span></span><span></span></button>
+</nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#lanzamiento" data-scroll>Lanzamiento</a>
+  <a href="#archivo" data-scroll>Archivo</a>
+  <a href="#taller" data-scroll>Mi Taller</a>
+  <a href="#artista" data-scroll>Sobre Mí</a>
+  <a href="#ritual" data-scroll>Reserva</a>
+  <a href="#estudio" data-scroll>Estudio</a>
+  <a href="#ritual" data-scroll class="mm-cta">Reservar sesión →</a>
+  <a href="https://wa.me/56957902862?text=Hola%20Miguel%2C%20quiero%20reservar%20una%20sesión%20de%20tatuaje" target="_blank" rel="noopener" class="mm-wsp">WhatsApp</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-media">
+    <img src="images/01-statue-cyan-skull.jpg" alt="Tatuaje de estatua clásica con reflejo cian sobre cráneo" fetchpriority="high" decoding="async">
+  </div>
+  <div class="hero-scrim"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="accent-line"></span>
+      <span class="eyebrow">Black &amp; Grey · Realismo oscuro · Talca, Chile</span>
+    </div>
+    <h1>
+      <span class="ln"><span>La piedra</span></span>
+      <span class="ln"><span>se vuelve</span></span>
+      <span class="ln"><span class="accent-word">piel</span></span>
+    </h1>
+    <p class="hero-sub">Tatuaje de autor de gran formato. Realismo oscuro texturizado, esculpido sobre el cuerpo a fuerza de paciencia y tinta.</p>
+    <div class="hero-actions">
+      <a class="btn btn-cyan cursor-target" href="#ritual" data-scroll>Entrar al estudio <span class="arr">→</span></a>
+      <a class="btn btn-ghost cursor-target" href="#archivo" data-scroll>Ver el archivo</a>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <span>@miguelmunoz_tattoos</span>
+    <span class="scroll-cue"><span>Desliza</span><span class="bar"></span></span>
+  </div>
+</header>
+
+<!-- ============ OFERTA DE LANZAMIENTO ============ -->
+<section class="section lanzamiento" id="lanzamiento">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Oferta de<br>Lanzamiento</h2>
+      <span class="idx">Apertura · Cupos limitados</span>
+    </div>
+    <p class="lanza-lead" data-reveal>Para celebrar la apertura de mi taller libero una colección única: cuatro diseños <strong>Flash</strong> listos para tatuar y cuatro <strong>Diseños Exclusivos</strong> a precio promocional. Cada uno lo tatúo una sola vez.</p>
+
+    <!-- Flash del artista -->
+    <div class="lanza-group" data-reveal>
+      <div class="lanza-group-head">
+        <span class="lanza-badge flash">Flash</span>
+        <h3>Mis Flash</h3>
+        <span class="lanza-hint">Diseños listos · Primer llegado, primer tatuado</span>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track lanza-track" tabindex="0" aria-label="Carrusel Flash">
+        <article class="lanza-card flash">
+          <figure><img src="images/08-serpent-dotwork.jpg" alt="Flash: serpiente en puntillismo" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Serpiente</h4>
+            <span class="lanza-price">$45.000</span>
+          </div>
+        </article>
+        <article class="lanza-card flash">
+          <figure><img src="images/07-nouveau-lineart.jpg" alt="Flash: figura art nouveau en línea" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Nouveau</h4>
+            <span class="lanza-price">$45.000</span>
+          </div>
+        </article>
+        <article class="lanza-card flash">
+          <figure><img src="images/10-cat-mask-drawing.jpg" alt="Flash: felino con máscara" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Felino</h4>
+            <span class="lanza-price">$50.000</span>
+          </div>
+        </article>
+        <article class="lanza-card flash">
+          <figure><img src="images/13-red-gothic.jpg" alt="Flash: sigilo gótico en tinta roja" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Sigilo</h4>
+            <span class="lanza-price">$55.000</span>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Diseños exclusivos -->
+    <div class="lanza-group" data-reveal>
+      <div class="lanza-group-head">
+        <span class="lanza-badge unico">1 / 1</span>
+        <h3>Diseños exclusivos</h3>
+        <span class="lanza-hint">Obra única · Precio promocional de apertura</span>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track lanza-track" tabindex="0" aria-label="Carrusel Diseños Exclusivos">
+        <article class="lanza-card unico">
+          <figure><img src="images/02-statue-weeping.jpg" alt="Exclusivo: estatua que llora" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>La Estatua</h4>
+            <p>Mármol fracturado, lágrimas y velos. Pieza de antebrazo.</p>
+            <span class="lanza-price"><s>$180.000</s> $120.000</span>
+          </div>
+        </article>
+        <article class="lanza-card unico">
+          <figure><img src="images/04-reaper-neck.jpg" alt="Exclusivo: encapuchado heráldico" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>El Encapuchado</h4>
+            <p>Heráldica simétrica con alas y filigrana. Nuca o pecho.</p>
+            <span class="lanza-price"><s>$160.000</s> $110.000</span>
+          </div>
+        </article>
+        <article class="lanza-card unico">
+          <figure><img src="images/11-cats-familiars.jpg" alt="Exclusivo: custodios felinos" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Los Custodios</h4>
+            <p>Tres familiares en trazo de grabado antiguo. Pectoral.</p>
+            <span class="lanza-price"><s>$220.000</s> $150.000</span>
+          </div>
+        </article>
+        <article class="lanza-card unico">
+          <figure><img src="images/12-woman-skull.jpg" alt="Exclusivo: rostro y cráneo realista" loading="lazy" decoding="async"></figure>
+          <div class="lanza-info">
+            <h4>Vanitas II</h4>
+            <p>Rostro y cráneo en claroscuro extremo. Brazo completo.</p>
+            <span class="lanza-price"><s>$200.000</s> $140.000</span>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="lanza-cta" data-reveal>
+      <a class="btn btn-cyan cursor-target" href="https://wa.me/56957902862?text=Hola%20Miguel%2C%20me%20interesa%20un%20dise%C3%B1o%20de%20la%20oferta%20de%20lanzamiento" target="_blank" rel="noopener">Reservar un diseño <span class="arr">→</span></a>
+      <span class="lanza-cta-note">Reserva tu diseño por WhatsApp — cada uno lo tatúo una única vez.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFIESTO ============ -->
+<section class="section manifesto" id="manifiesto">
+  <div class="wrap">
+    <div data-reveal>
+      <span class="eyebrow" style="display:block;margin-bottom:34px"><span class="tick">·</span> Manifiesto</span>
+      <p class="manifesto-quote">No decoro cuerpos. <em>Altero la presencia</em> de quien los porta.</p>
+    </div>
+    <div class="manifesto-meta" data-reveal>
+      <p>Una constante exploración de la dualidad: la belleza estática de la escultura clásica, corrompida por el paso del tiempo, frente a la agresividad protectora del mito. Negros absolutos, luz que esculpe el volumen y un único destello que rompe la oscuridad.</p>
+      <div class="keywords">
+        <span>Claroscuro</span><span>Escultura viva</span><span>Textura</span><span>Mitología</span><span>Permanencia</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EL ARCHIVO ============ -->
+<section class="section archivo" id="archivo">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>El Archivo</h2>
+      <span class="idx">Obra curada · Selección 2024–2026</span>
+    </div>
+
+    <!-- Categoría 1 · Black & Grey -->
+    <div class="cat" data-reveal>
+      <div class="cat-head">
+        <span class="cat-num">01</span>
+        <h3>Black &amp; Grey</h3>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track" tabindex="0" aria-label="Carrusel Black & Grey">
+        <figure class="cat-slide">
+          <img src="images/02-statue-weeping.jpg" alt="Manga de estatua clásica agrietada que llora" loading="lazy" decoding="async">
+          <figcaption><b>La estatua que llora</b><span>Manga completa · Brazo · 14 hrs</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/05-dragon-sleeve.jpg" alt="Manga de dragón japonés" loading="lazy" decoding="async">
+          <figcaption><b>Dragón japonés</b><span>Manga · Black &amp; Grey</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/06-viking-warrior.jpg" alt="Retrato de guerrera vikinga" loading="lazy" decoding="async">
+          <figcaption><b>Guerrera</b><span>Retrato · Black &amp; Grey</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/12-woman-skull.jpg" alt="Rostro y cráneo realista" loading="lazy" decoding="async">
+          <figcaption><b>Rostro &amp; cráneo</b><span>Realismo · Claroscuro extremo</span></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Categoría 2 · Realismo Oscuro -->
+    <div class="cat" data-reveal>
+      <div class="cat-head">
+        <span class="cat-num">02</span>
+        <h3>Realismo Oscuro</h3>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track" tabindex="0" aria-label="Carrusel Realismo Oscuro">
+        <figure class="cat-slide">
+          <img src="images/01-statue-cyan-skull.jpg" alt="Estatua y cráneo con reflejo cian" loading="lazy" decoding="async">
+          <figcaption><b>Vanitas</b><span>Memento mori · Antebrazo · 9 hrs</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/03-samurai-cyan.jpg" alt="Máscara de samurái con destello cian" loading="lazy" decoding="async">
+          <figcaption><b>Máscara del samurái</b><span>Neotradicional oscuro · Antebrazo · 8 hrs</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/04-reaper-neck.jpg" alt="Figura encapuchada con alas en la nuca" loading="lazy" decoding="async">
+          <figcaption><b>El encapuchado</b><span>Blackwork ornamental · Cuello · 6 hrs</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/11-cats-familiars.jpg" alt="Tres felinos custodios, grabado" loading="lazy" decoding="async">
+          <figcaption><b>Los custodios</b><span>Grabado · Pecho · 10 hrs</span></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Categoría 3 · Lettering -->
+    <div class="cat" data-reveal>
+      <div class="cat-head">
+        <span class="cat-num">03</span>
+        <h3>Lettering</h3>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track" tabindex="0" aria-label="Carrusel Lettering">
+        <figure class="cat-slide">
+          <img src="images/13-red-gothic.jpg" alt="Diseño gótico en tinta roja" loading="lazy" decoding="async">
+          <figcaption><b>Sigilo</b><span>Cibersigilismo · Tinta roja · Brazo</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/taller-2.webp" alt="Lettering original a mano" loading="lazy" decoding="async">
+          <figcaption><b>Lettering de autor</b><span>Trazo original · Tinta negra</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/07-nouveau-lineart.jpg" alt="Figura art nouveau en línea" loading="lazy" decoding="async">
+          <figcaption><b>Art nouveau</b><span>Linework ornamental</span></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Categoría 4 · Varios -->
+    <div class="cat" data-reveal>
+      <div class="cat-head">
+        <span class="cat-num">04</span>
+        <h3>Varios</h3>
+        <div class="cat-nav">
+          <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+          <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+      <div class="cat-track" tabindex="0" aria-label="Carrusel Varios">
+        <figure class="cat-slide">
+          <img src="images/14-catrina-color.jpg" alt="Catrina a color" loading="lazy" decoding="async">
+          <figcaption><b>Catrina</b><span>Color · Neotradicional</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/09-goku-dotwork.jpg" alt="Personaje de anime en puntillismo" loading="lazy" decoding="async">
+          <figcaption><b>Anime</b><span>Dotwork · Experimental</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/08-serpent-dotwork.jpg" alt="Serpiente en puntillismo" loading="lazy" decoding="async">
+          <figcaption><b>Serpiente</b><span>Dotwork · Puntillismo</span></figcaption>
+        </figure>
+        <figure class="cat-slide">
+          <img src="images/10-cat-mask-drawing.jpg" alt="Ilustración de felino con máscara" loading="lazy" decoding="async">
+          <figcaption><b>Felino enmascarado</b><span>Ilustración · Otros estilos</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EL TALLER ============ -->
+<section class="section taller" id="taller">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Mi Taller</h2>
+      <span class="idx">Bocetos · Lettering · Símbolos</span>
+    </div>
+    <p class="taller-lead" data-reveal>Más allá de la piel, existe el trazo original. Este muro es una obra viva: mis dibujos, calcos, lettering y símbolos personales conviven sobre el negro, ganan protagonismo y respiran.</p>
+
+    <div class="wall-car" data-reveal>
+      <div class="wall-nav cat-nav">
+        <button class="cat-btn" data-dir="-1" type="button" aria-label="Anterior">←</button>
+        <button class="cat-btn" data-dir="1" type="button" aria-label="Siguiente">→</button>
+      </div>
+      <div class="cat-track wall-track" tabindex="0" aria-label="Carrusel del taller">
+        <div class="wall-col">
+          <div class="mount"><span class="tag">Boceto · Lápiz</span>
+            <image-slot id="taller-1" src="images/taller-1.webp" shape="rect" placeholder="Boceto a lápiz"></image-slot>
+          </div>
+          <div class="mount"><span class="tag">Lettering</span>
+            <image-slot id="taller-2" src="images/taller-2.webp" shape="rect" placeholder="Arrastra un lettering"></image-slot>
+          </div>
+        </div>
+        <div class="wall-col">
+          <div class="mount"><span class="tag">Símbolo</span>
+            <image-slot id="taller-3" src="images/taller-3.webp" shape="rect" placeholder="Arrastra un símbolo"></image-slot>
+          </div>
+          <div class="mount"><span class="tag">Calco</span>
+            <image-slot id="taller-4" src="images/taller-4.webp" shape="rect" placeholder="Arrastra un calco"></image-slot>
+          </div>
+        </div>
+        <div class="wall-col">
+          <div class="mount"><span class="tag">Concepto</span>
+            <image-slot id="taller-5" src="images/taller-5.webp" shape="rect" placeholder="Arrastra un concepto"></image-slot>
+          </div>
+          <div class="mount"><span class="tag">Textura</span>
+            <image-slot id="taller-6" src="images/taller-6.webp" shape="rect" placeholder="Arrastra una textura"></image-slot>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="taller-note" data-reveal>
+      <span class="accent-line"></span>
+      <span>Espacio vivo — aquí iré sumando ilustraciones y trazos originales.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOBRE EL ARTISTA ============ -->
+<section class="section artista" id="artista">
+  <div class="wrap">
+    <div class="portrait" data-reveal>
+      <video class="portrait-vid" data-src="media/autor.mp4" muted loop playsinline preload="none"></video>
+      <span class="cap">Miguel Muñoz · En el taller</span>
+      <span class="portrait-badge">Escultor de la piel</span>
+    </div>
+    <div class="statement" data-reveal>
+      <span class="eyebrow"><span class="tick">·</span> Sobre mí</span>
+      <h2>Escultor de la piel.</h2>
+      <p><span class="lead">Trabajo el cuerpo humano como un bloque de mármol vivo.</span> Reinterpreto el clasicismo, la mitología y la ilustración oscura bajo una óptica de alto contraste y crudeza elegante.</p>
+      <p>Busco el negro absoluto porque del vacío emerge la luz. La piel limpia es mi punto de máxima tensión; la textura —el frío del metal, la porosidad del mármol, la fluidez del humo— es mi firma. Cada pieza es una armadura visual: permanente, imponente y silenciosa.</p>
+      <p>No es un tatuaje de quince minutos. Es una obra que exige paciencia, respeto al oficio y la decisión de portarla para siempre.</p>
+      <div class="sign">Anyeloski<small>Miguel Muñoz · Taller Arcano</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EL RITUAL / RESERVA ============ -->
+<section class="section ritual" id="ritual">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>El Ritual<br>de reserva</h2>
+      <span class="idx">Cuatro pasos · Coleccionista &amp; artista</span>
+    </div>
+
+    <div class="ritual-panel" data-reveal>
+      <div class="steps-bar">
+        <button class="step-tab active" type="button"><span class="rn">I</span><span class="lb"><b>La Zona</b><small>El lienzo</small></span></button>
+        <button class="step-tab" type="button"><span class="rn">II</span><span class="lb"><b>La Escala</b><small>Las medidas</small></span></button>
+        <button class="step-tab" type="button"><span class="rn">III</span><span class="lb"><b>La Idea</b><small>El concepto</small></span></button>
+        <button class="step-tab" type="button"><span class="rn">IV</span><span class="lb"><b>El Compromiso</b><small>El abono</small></span></button>
+      </div>
+
+      <div class="step-body" id="step-body">
+
+        <!-- Paso I -->
+        <div class="step-pane active">
+          <h3>La Zona</h3>
+          <p class="hint">Marca sobre el lienzo anatómico dónde vivirá la pieza. Esto define la composición y la dirección del arte sobre tu cuerpo.</p>
+          <div class="zona-grid">
+            <div class="map-col">
+              <div class="body3d" id="body3d" aria-label="Modelo anatómico 3D: arrastra para girar, toca una parte del cuerpo para elegirla">
+                <span class="b3d-loading" aria-hidden="true"></span>
+                <span class="b3d-face" aria-live="polite">Frente</span>
+                <div class="b3d-views">
+                  <button type="button" data-view="front">Frente</button>
+                  <button type="button" data-view="back">Espalda</button>
+                </div>
+                <div class="b3d-zoom" aria-label="Zoom del modelo">
+                  <button type="button" data-z="in" aria-label="Acercar">+</button>
+                  <button type="button" data-z="out" aria-label="Alejar">−</button>
+                </div>
+                <span class="b3d-hint">Selecciona directamente sobre el cuerpo</span>
+              </div>
+              <small class="map-hint">Holograma 360° · gira arrastrando · zoom con rueda o ±</small>
+            </div>
+            <div class="zona-side">
+              <div class="zona-live" id="zona-live">
+                <span class="lbl">Zona elegida</span><b>—</b>
+              </div>
+              <button class="zone-alt-toggle" id="zone-alt-toggle" type="button"
+                aria-expanded="false" aria-controls="zone-list">¿Prefieres elegir de una lista? <span class="zat-ic">▾</span></button>
+              <div class="zone-list" id="zone-list" hidden>
+                <button class="chip" data-zone="Cabeza" type="button">Cabeza</button>
+                <button class="chip" data-zone="Cuello" type="button">Cuello</button>
+                <button class="chip" data-zone="Clavícula" type="button">Clavícula</button>
+                <button class="chip" data-zone="Esternón" type="button">Esternón</button>
+                <button class="chip" data-zone="Pecho" type="button">Pecho</button>
+                <button class="chip" data-zone="Costillas" type="button">Costillas</button>
+                <button class="chip" data-zone="Abdomen superior" type="button">Abdomen superior</button>
+                <button class="chip" data-zone="Abdomen inferior" type="button">Abdomen inferior</button>
+                <button class="chip" data-zone="Costado" type="button">Costado</button>
+                <button class="chip" data-zone="Espalda alta" type="button">Espalda alta</button>
+                <button class="chip" data-zone="Espalda media" type="button">Espalda media</button>
+                <button class="chip" data-zone="Espalda baja" type="button">Espalda baja</button>
+                <button class="chip" data-zone="Hombro" type="button">Hombro</button>
+                <button class="chip" data-zone="Brazo" type="button">Brazo</button>
+                <button class="chip" data-zone="Codo" type="button">Codo</button>
+                <button class="chip" data-zone="Antebrazo" type="button">Antebrazo</button>
+                <button class="chip" data-zone="Muñeca" type="button">Muñeca</button>
+                <button class="chip" data-zone="Mano" type="button">Mano</button>
+                <button class="chip" data-zone="Pelvis" type="button">Pelvis</button>
+                <button class="chip" data-zone="Cadera" type="button">Cadera</button>
+                <button class="chip" data-zone="Glúteo" type="button">Glúteo</button>
+                <button class="chip" data-zone="Ingle" type="button">Ingle</button>
+                <button class="chip" data-zone="Muslo frontal" type="button">Muslo frontal</button>
+                <button class="chip" data-zone="Muslo posterior" type="button">Muslo posterior</button>
+                <button class="chip" data-zone="Rodilla" type="button">Rodilla</button>
+                <button class="chip" data-zone="Pantorrilla" type="button">Pantorrilla</button>
+                <button class="chip" data-zone="Espinilla" type="button">Espinilla</button>
+                <button class="chip" data-zone="Tobillo" type="button">Tobillo</button>
+                <button class="chip" data-zone="Empeine" type="button">Empeine</button>
+                <button class="chip" data-zone="Planta del pie" type="button">Planta del pie</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso II -->
+        <div class="step-pane">
+          <h3>La Escala</h3>
+          <p class="hint">Ingresa las medidas exactas en centímetros. La escala determina el formato de la pieza y el abono de reserva.</p>
+          <div class="escala-grid">
+            <div>
+              <div class="field">
+                <label>Formatos frecuentes</label>
+                <div class="size-presets">
+                  <button class="chip preset" data-w="8"  data-h="8"  type="button">Mínimal · 8×8</button>
+                  <button class="chip preset" data-w="12" data-h="9"  type="button">Pequeño · 12×9</button>
+                  <button class="chip preset" data-w="15" data-h="20" type="button">Mediano · 15×20</button>
+                  <button class="chip preset" data-w="20" data-h="30" type="button">Grande · 20×30</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>O medidas exactas</label>
+                <div class="dim-row">
+                  <input id="dim-w" type="number" min="1" value="12" inputmode="numeric">
+                  <span class="x">×</span>
+                  <input id="dim-h" type="number" min="1" value="9" inputmode="numeric">
+                  <span class="u">cm</span>
+                </div>
+              </div>
+              <div class="preview-box">
+                <div class="preview-rect" id="preview-rect">12×9</div>
+              </div>
+            </div>
+            <div class="scale-readout">
+              <span class="lbl">Clasificación</span>
+              <div class="cls" id="scale-class"><span class="em">Pequeño</span></div>
+              <p class="abo" id="scale-abono">Abono de reserva · $10.000</p>
+              <hr class="rule" style="margin:22px 0">
+              <p class="abo" style="font-size:.85rem">Coberturas y mangas se evalúan presencialmente en el estudio para una cotización precisa.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso III -->
+        <div class="step-pane">
+          <h3>La Idea</h3>
+          <p class="hint">Elige el estilo y describe el concepto. Las fotografías de la zona y tus referencias se envían después, directamente en el chat de WhatsApp.</p>
+          <div class="idea-grid">
+            <div>
+              <div class="foto-note">
+                <span class="ic">📎</span>
+                <p><strong>Las fotos van por WhatsApp.</strong> Al enviar tu solicitud, te pediré en el chat la foto de la zona —indispensable para coberturas— y tus imágenes de referencia.</p>
+              </div>
+              <div class="style-chips">
+                <button class="chip" data-style="Realismo" type="button">Realismo</button>
+                <button class="chip" data-style="Blackwork" type="button">Blackwork</button>
+                <button class="chip" data-style="Mitología" type="button">Mitología</button>
+                <button class="chip" data-style="Lettering" type="button">Lettering</button>
+                <button class="chip" data-style="Linework" type="button">Linework</button>
+              </div>
+            </div>
+            <div class="field" style="margin:0">
+              <label>El concepto</label>
+              <textarea id="idea-text" maxlength="600" placeholder="Describe la idea, la atmósfera y las referencias que tienes en mente…"></textarea>
+              <div class="ta-foot"><small id="idea-count">0 / 600</small></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso IV -->
+        <div class="step-pane">
+          <h3>El Compromiso</h3>
+          <p class="hint">El abono no es un trámite: es un contrato de respeto mutuo entre coleccionista y artista. Asegura tu sesión y reserva mi tiempo y mi oficio.</p>
+          <div class="contract">
+            <dl class="contract-lines">
+              <div class="row" data-go="0" role="button" tabindex="0" title="Editar la zona"><dt>Zona</dt><dd id="c-zona">—</dd></div>
+              <div class="row" data-go="1" role="button" tabindex="0" title="Editar las medidas"><dt>Medidas</dt><dd id="c-med">—</dd></div>
+              <div class="row" data-go="1" role="button" tabindex="0" title="Editar el formato"><dt>Formato</dt><dd id="c-fmt">—</dd></div>
+              <div class="row" data-go="2" role="button" tabindex="0" title="Editar el estilo"><dt>Estilo</dt><dd id="c-styles">—</dd></div>
+              <div class="row total"><dt>Abono de reserva</dt><dd id="c-abono">$10.000</dd></div>
+            </dl>
+            <div class="pledge">
+              <span class="eyebrow"><span class="tick">·</span> El pacto</span>
+              <p class="quote">“Poseer una de mis piezas es un privilegio artístico, no una transacción.”</p>
+              <p>El abono se descuenta del valor final de tu tatuaje. Confirmar es reservar mi tiempo, mi concentración y mi oficio para tu obra.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="step-foot">
+        <button class="ghost-btn" id="r-prev" type="button" disabled>← Atrás</button>
+        <span class="step-meta" id="step-meta" aria-live="polite">Paso I de IV · La Zona</span>
+        <button class="btn btn-cyan cursor-target" id="r-next" type="button">Continuar <span class="arr">→</span></button>
+      </div>
+
+      <!-- Done -->
+      <div class="ritual-done" id="ritual-done">
+        <div class="seal">✓</div>
+        <h3>Solicitud lista</h3>
+        <p>Has preparado tu reserva de <strong id="done-zona">la zona</strong>. Gestiono mis citas personalmente por WhatsApp — envíame tu solicitud y coordinamos fecha y abono directamente.</p>
+        <dl class="done-recap" id="done-recap"></dl>
+        <div class="done-actions">
+          <a class="btn btn-cyan cursor-target" id="done-wsp" href="#" target="_blank" rel="noopener">Enviar por WhatsApp <span class="arr">→</span></a>
+          <a class="btn btn-ghost cursor-target" href="#estudio" data-scroll>Ver el estudio</a>
+        </div>
+        <button class="ghost-btn done-restart" id="r-restart" type="button">↺ Comenzar de nuevo</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ESTUDIO / FOOTER ============ -->
+<footer class="section estudio" id="estudio" style="padding-bottom:0">
+  <div class="wrap">
+
+    <div class="estudio-lead" data-reveal>
+      <div class="estudio-word">ANYELOSKI<span class="dot">.</span></div>
+      <p class="estudio-tag">Una galería de arte privada y subterránea. Entra en silencio, observa el detalle, y entiende que esto es permanente.</p>
+    </div>
+
+    <div class="estudio-grid">
+
+      <!-- Ubicación — ahora protagonista, junto a la info -->
+      <a class="map" data-reveal href="https://www.google.com/maps/place/35%C2%B025'15.0%22S+71%C2%B039'32.7%22W/@-35.4206019,-71.6613815,17z/data=!4m4!3m3!8m2!3d-35.4208364!4d-71.6590843?hl=es-CL&entry=tts" target="_blank" rel="noopener" aria-label="Ver ubicación en Google Maps">
+        <svg viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice">
+          <line class="road" x1="0" y1="120" x2="800" y2="180"/>
+          <line class="road" x1="0" y1="320" x2="800" y2="270"/>
+          <line class="road main" x1="0" y1="430" x2="800" y2="370"/>
+          <line class="road" x1="120" y1="0" x2="180" y2="520"/>
+          <line class="road main" x1="380" y1="0" x2="420" y2="520"/>
+          <line class="road" x1="600" y1="0" x2="560" y2="520"/>
+          <line class="road" x1="700" y1="0" x2="730" y2="520"/>
+          <circle class="pin-pulse" cx="400" cy="280" r="22"/>
+          <circle class="pin" cx="400" cy="280" r="6"/>
+        </svg>
+        <div class="map-overlay">
+          <span class="map-eyebrow"><span class="accent-line"></span>La ubicación</span>
+          <span class="map-name">Taller Arcano</span>
+          <span class="map-where">Talca · Región del Maule, Chile</span>
+        </div>
+        <span class="map-cue">Ver en Google Maps →</span>
+        <span class="map-coords">35°25'15.0"S 71°39'32.7"W</span>
+      </a>
+
+      <div class="estudio-info" data-reveal>
+        <div class="info-block">
+          <h4>Canales</h4>
+          <a href="https://wa.me/56957902862?text=Hola%20Miguel%2C%20quiero%20reservar%20una%20sesión%20de%20tatuaje" target="_blank" rel="noopener" class="wsp-link">WhatsApp · Reservas</a>
+          <a href="https://instagram.com/miguelmunoz_tattoos" target="_blank" rel="noopener">@miguelmunoz_tattoos</a>
+          <a href="#ritual" data-scroll>Agendar cita</a>
+          <a href="#archivo" data-scroll>Ver el archivo</a>
+        </div>
+        <div class="info-block">
+          <h4>Horario</h4>
+          <p>Martes a Sábado</p>
+          <p>Por cita previa</p>
+          <p>Sesiones largas</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="estudio-foot">
+      <span>© MMXXVI · Anyeloski — Miguel Muñoz</span>
+      <a class="showup-credit" href="https://www.showup.lat" target="_blank" rel="noopener">
+        Sitio gestionado por <strong>ShowUp</strong> <span class="su-arr">↗</span>
+      </a>
+      <a href="#top" data-scroll>Volver arriba ↑</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ WHATSAPP FLOTANTE ============ -->
+<a class="wsp-fab cursor-target" href="https://wa.me/56957902862?text=Hola%20Miguel%2C%20quiero%20reservar%20una%20sesión%20de%20tatuaje" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z M12 2a10 10 0 0 0-8.6 15.06L2 22l5.06-1.33A10 10 0 1 0 12 2zm0 18.2c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-3 .79.8-2.93-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+  <span class="wsp-fab-label">Reserva por WhatsApp</span>
+</a>
+
+<!-- ============ TWEAKS ============ -->
+<aside id="tweaks">
+  <div class="tw-head">
+    <b>TWEAKS</b>
+    <button id="tw-close" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="tw-body">
+    <div class="tw-group">
+      <label>Sistema tipográfico</label>
+      <div class="tw-seg" id="tw-combo">
+        <button data-v="clasico">El Escultor Clásico<span class="s">Cinzel + Inter</span></button>
+        <button data-v="brutalista">Impacto Brutalista<span class="s">Archivo Expanded + Inter</span></button>
+        <button data-v="contemp">Alquimista Contemporáneo<span class="s">Cormorant + Jakarta</span></button>
+      </div>
+    </div>
+    <div class="tw-group">
+      <label>Color de acento</label>
+      <div class="tw-swatches" id="tw-accent">
+        <button data-v="cyan" style="background:#00e5ff" aria-label="Cian"></button>
+        <button data-v="red" style="background:#e5484d" aria-label="Rojo"></button>
+        <button data-v="ivory" style="background:#f4f4f0" aria-label="Marfil"></button>
+      </div>
+    </div>
+    <div class="tw-group">
+      <label>Grano de película</label>
+      <div class="tw-toggle" id="tw-grain">
+        <button data-v="on">Activado</button>
+        <button data-v="off">Desactivado</button>
+      </div>
+    </div>
+    <div class="tw-group">
+      <label>Cursor personalizado</label>
+      <div class="tw-toggle" id="tw-cursor">
+        <button data-v="on">Activado</button>
+        <button data-v="off">Desactivado</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script src="image-slot.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
