@@ -4,3 +4,5 @@ screenshots/
 uploads/
 __*.html
 prompt.txt
+
+.vercel

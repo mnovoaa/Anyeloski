@@ -1,0 +1,7 @@
+# no desplegar artefactos locales de desarrollo
+.claude
+screenshots
+uploads
+__*.html
+prompt.txt
+.gitignore
