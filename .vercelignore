@@ -5,3 +5,7 @@ uploads
 __*.html
 prompt.txt
 .gitignore
+# documentación: vive en el repo, no en el sitio público
+docs
+README.md
+CLAUDE.md
