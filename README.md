@@ -1,4 +1,22 @@
-# ANYELOSKI — Portfolio y reservas de estudio de tatuajes
+<p align="center">
+  <img src="assets/preview.webp" alt="Sitio de ANYELOSKI" width="840">
+</p>
+
+<h1 align="center">ANYELOSKI</h1>
+<p align="center"><b>Portafolio y reservas para estudio de tatuajes · by ShowUp</b></p>
+<p align="center"><a href="https://anyeloski.vercel.app"><b>🔗 anyeloski.vercel.app</b></a></p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Three.js-3D-000000?logo=threedotjs&logoColor=white">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/Vercel-deploy-000000?logo=vercel">
+</p>
+
+> Sitio del tatuador Miguel Muñoz (Talca). Su pieza central es un **selector anatómico 3D
+> holográfico** (Three.js, 58 zonas corporales) para el flujo de reserva "El Ritual", más galería
+> por estilos, cuenta regresiva de lanzamiento y panel de personalización (acento, film grain).
+
+---
 
 Sitio web del estudio de tatuajes **Anyeloski** (Miguel Muñoz · Talca, Chile).
 Portfolio de obra, presentación del artista y del estudio, y un flujo de
